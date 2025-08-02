@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Sora", sans-serif;
+  font-size: 16px;
+  background-color: #000000;
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-container {
+  min-width: 544px;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stats {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 800;
+}
+
+.cards-grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.card {
+  width: calc(25% - 5px);
+  aspect-ratio: 1;
+  background-color: #8234e9;
+}
