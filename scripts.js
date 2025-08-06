@@ -44,6 +44,9 @@ function createCard(card) {
   // Adiciona o Emoji ao Card
   cardElement.appendChild(emoji)
 
+  // Adiciona o evento de clique na carta.
+  cardElement.addEventListener("click", () => handleCardClick(cardElement, card))
+
   return cardElement
 }
 
@@ -61,4 +64,95 @@ function renderCards() {
   })
 }
 
-renderCards()
+function handleCardClick(cardElement, card) {
+  if (
+    isCheckingPair || // Ignora o clique enquanto verifica o par
+    cardElement.classList.contains('revealed') // Ignora se a carta já esta virada
+  ) {
+    return
+  }
+
+  //Revela a carta
+  cardElement.classList.add('revealed')
+
+  // Adicionar no Array as cartas viradas.
+  flippedCards.push({ cardElement, card })
+
+  //Verifica se é a segunda carta virada.
+  if (flippedCards.length === 2) {
+    // Atualiza para verdadeiro para sinalizar que vamos verificar o par
+    isCheckingPair = true
+
+    // Incrementa o contador de tentativas
+    attempts++
+
+    // Selecionar as Cartas
+    const [firstCard, secondCard] = flippedCards
+
+    //Verifica as as cartas formam um par
+    if (firstCard.card.content === secondCard.card.content) {
+      // Incrementa os pares encontrados
+      matchedPairs++
+
+      // Marca as cartas como encontradas
+      cardItems.forEach(item => {
+        if (item.content === firstCard.card.content) {
+          item.matched = true
+        }
+      })
+
+      // Limpa Array de cartas viradas
+      flippedCards = []
+
+      // Libera proxima rodada
+      isCheckingPair = false
+
+      // Atualiza o Plcar
+      updateStats()
+
+      //Verifica se tem itens para encontrar.
+      const toFind = cardItems.find(item => item.matched === false)
+
+      if (!toFind) {
+        alert("Parabéns! Você encontrou todos os pares.")
+      }
+    } else {
+      setTimeout(() => {
+        firstCard.cardElement.classList.remove("revealed")
+        secondCard.cardElement.classList.remove("revealed")
+
+        flippedCards = []
+        isCheckingPair = false
+        updateStats()
+      }, 800)
+    }
+  }
+}
+
+function updateStats() {
+  document.getElementById('stats').textContent = `${matchedPairs} acertos de ${attempts} tentativas`
+}
+
+// Funcao que reinicia o jogo
+function resetGame() {
+  flippedCards = []
+  matchedPairs = 0
+  attempts = 0
+  isCheckingPair = false
+
+  // Desmarcar todas as cartas
+  cardItems.forEach((card) => (card.matched = false))
+
+  //Renderiza os cards e atualiza o placar
+  renderCards()
+  updateStats()
+}
+
+function initGame() {
+  renderCards()
+
+  // Adiciona o evento de reiniciar o jogo no botão
+  document.getElementById("restart").addEventListener("click", resetGame)
+}
+
+initGame()
